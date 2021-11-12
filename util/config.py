@@ -34,7 +34,7 @@ class Conf:
     @simple_env_var.section
     class Client:
         clean_session = False
-        keep_alive = 10
+        keep_alive = 30
         id = "switchbotcloud-dc"
 
     @simple_env_var.section
@@ -43,8 +43,8 @@ class Conf:
         connect_timeout_seconds = 2
         command_timeout_seconds = 3
         scan_delay = 1800
-        command_retries = 2
-        command_retry_wait_seconds = 3
+        command_retries = 1
+        command_retry_wait_seconds = 0.5
         device_id_prefix = "switchbotbluetooth-"
         adapter = "hci0"
         service_uuid = "cba20d00-224d-11e6-9fb8-0002a5d5c51b"
