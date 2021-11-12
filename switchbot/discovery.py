@@ -51,7 +51,7 @@ class Discovery(threading.Thread):
             if self.is_device_id_known(device_id):
                 logger.info(
                     "Found curtain switchbot with mac {} and alias {}".format(device.mac_address, device.alias() + "_" + device.mac_address))
-                devices.append(Device(id=device_id, name=device.alias(),
+                devices.append(Device(id=device_id, name=device.alias() + "_" + device.mac_address,
                                       type=conf.Senergy.dt_curtain, state=device_state.online))
             else:
                 self._current_device_is_switchbot = False
