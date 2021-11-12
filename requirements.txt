@@ -1,0 +1,12 @@
+git+https://github.com/y-du/simple-env-var-manager.git@1.0.2
+git+https://github.com/SENERGY-Platform/mgw-dc-lib.git@0.1.0
+paho-mqtt<2.0.0
+pycryptodome<4.0.0
+gatt==0.2.7
+dbus-python==1.2.16
+gobject==0.1.0
+PyGObject==3.42.0
+
+# Uncomment these, if using venv
+# vext==0.7.3
+# vext.gi==0.7.0
