@@ -43,7 +43,6 @@ class Conf:
         connect_timeout_seconds = 2
         command_timeout_seconds = 3
         scan_delay = 1800
-        delay = 600
         command_retries = 2
         command_retry_wait_seconds = 3
         device_id_prefix = "switchbotbluetooth-"

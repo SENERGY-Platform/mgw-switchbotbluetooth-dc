@@ -130,7 +130,7 @@ class Discovery(threading.Thread):
             if time.time() - last_ble_check > conf.Discovery.scan_delay:
                 last_ble_check = time.time()
                 self._refresh_devices()
-            time.sleep(conf.Discovery.delay)
+            time.sleep(conf.Discovery.scan_delay / 100)  # at most 1 % too late
 
     def publish_devices(self):
         for device in self._devices:
