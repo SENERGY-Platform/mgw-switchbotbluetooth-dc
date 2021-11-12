@@ -192,7 +192,7 @@ class Command:
     def service_set_position(self, device_id: str, payload: dict) -> dict:
         if "target_position" not in payload:
             raise RuntimeError("Missing input")
-        self.position_to = payload
+        self.position_to = payload["target_position"]
         manager = BLEDeviceManager(adapter_name=conf.Discovery.adapter)
         device = BLEDevice(device_id, manager, self.service_set_position_ready_callback,
                            self.service_set_position_notification_callback)
