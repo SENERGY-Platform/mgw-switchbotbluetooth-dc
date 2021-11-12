@@ -47,16 +47,29 @@ class Discovery(threading.Thread):
         logger.info("Found {} bluetooth device(s)".format(len(manager.devices())))
 
         for device in manager.devices():
-            self._current_device_is_switchbot = False
-            device.connect()
-            manager.run(conf.Discovery.connect_timeout_seconds)
-            if self._current_device_is_switchbot:
+            device_id = conf.Discovery.device_id_prefix + device.mac_address
+            if self.is_device_id_known(device_id):
                 logger.info(
                     "Found curtain switchbot with mac {} and alias {}".format(device.mac_address, device.alias()))
-                devices.append(Device(id=conf.Discovery.device_id_prefix + device.mac_address, name=device.alias(),
+                devices.append(Device(id=device_id, name=device.alias(),
                                       type=conf.Senergy.dt_curtain, state=device_state.online))
+            else:
+                self._current_device_is_switchbot = False
+                device.connect()
+                manager.run(conf.Discovery.connect_timeout_seconds)
+                if self._current_device_is_switchbot:
+                    logger.info(
+                        "Found curtain switchbot with mac {} and alias {}".format(device.mac_address, device.alias()))
+                    devices.append(Device(id=device_id, name=device.alias(),
+                                          type=conf.Senergy.dt_curtain, state=device_state.online))
         logger.info("Scan completed, found {} switchbots".format(str(len(devices))))
         return devices
+
+    def is_device_id_known(self, device_id: str):
+        for d in self._devices:
+            if d.id == device_id:
+                return True
+        return False
 
     def discovery_device_ready(self, ble: BLEDevice):
         for service in ble.services:
