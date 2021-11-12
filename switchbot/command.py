@@ -62,12 +62,14 @@ class Command:
         }
         self.command_requests = 0
         self.position_to = 101
+        self.retry = 0
 
     def reset_for_next_cmd(self):
         self.command_requests = 0
         self.command_result = bytearray()
         self.connection_ok = False
         self.position_to = 101
+        self.retry = 0
 
     def handle_command(self, prefixed_device_id: str, service: str, payload: typing.AnyStr):
         device_id = prefixed_device_id.removeprefix(conf.Discovery.device_id_prefix)
@@ -83,14 +85,26 @@ class Command:
             return
         self.reset_for_next_cmd()
         try:
-            result = self.command_handlers[service](device_id, payload)
+            result = self.run_command(device_id, service, payload)
         except Exception as ex:
-            logger.error("Command Failed- {}".format(ex))
+            logger.error("Command failed: {}".format(ex))
             return
-
         response = {"command_id": command_id, "data": json.dumps(result).replace("'", "\"")}
         self.__mqtt_client.publish(mgw_dc.com.gen_response_topic(prefixed_device_id, service),
                                    json.dumps(response).replace("'", "\""), 2)
+
+    def run_command(self, device_id: str, service: str, payload: dict):
+        try:
+            result = self.command_handlers[service](device_id, payload)
+        except Exception as ex:
+            logger.error("Command execution failed: {}".format(ex))
+            if self.retry < conf.Discovery.command_retries:
+                self.retry += 1
+                logger.info("Command retry #" + str(self.retry) + " in " + str(conf.Discovery.command_retry_wait_seconds) + " seconds")
+                time.sleep(conf.Discovery.command_retry_wait_seconds)
+                return self.run_command(device_id, service, payload)
+            raise RuntimeError("Out of retries")
+        return result
 
     def service_status(self, device_id: str, _: None = None) -> dict:
         manager = BLEDeviceManager(adapter_name=conf.Discovery.adapter)
