@@ -1,9 +1,9 @@
-FROM python:3.10-trixie
+FROM python:3.14-trixie
 
 LABEL org.opencontainers.image.source https://github.com/SENERGY-Platform/mgw-switchbotbluetooth-dc
 
 
-RUN apt-get update && apt-get install -y libgirepository1.0-dev libdbus-1-dev
+RUN apt-get update && apt-get install -y --no-install-recommends libgirepository-2.0-dev libdbus-1-dev libcairo2-dev pkg-config && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
 
