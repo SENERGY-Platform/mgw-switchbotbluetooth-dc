@@ -1,4 +1,4 @@
-FROM python:3-buster
+FROM python:3.10-trixie
 
 LABEL org.opencontainers.image.source https://github.com/SENERGY-Platform/mgw-switchbotbluetooth-dc
 
